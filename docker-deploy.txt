@@ -10,11 +10,13 @@ sudo dnf list docker-ce --showduplicates | sort -r
 # Install docker-ce (Commercial Edition)
 # - Since containerd.io is install included in the latest version, --nobest select the next possible version to install
 # - If podman is installed, it conflict with podman-manpages. Simply remove it before installation
-sudo dnf remove podman-manpages
-sudo dnf install docker-ce --nobest -y
+#sudo dnf remove podman-manpages
+#sudo dnf install docker-ce --nobest -y
 
 # Install the latest containerd.io with the following command (please check the latest version needed)
+sudo dnf remove podman-manpages
 sudo dnf install https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm
+sudo dnf install docker-ce
 
 # Disable Firewall to allow DNS from inside
 sudo systemctl disable firewalld
