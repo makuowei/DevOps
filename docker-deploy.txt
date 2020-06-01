@@ -25,6 +25,9 @@ sudo systemctl disable firewalld
 sudo systemctl enable --now docker
 systemctl is-active docker
 
+# Enable IP Forwarding (for bridge network to reach outside)
+sudo sysctl net.ipv4.ip_forward=1
+
 ################## docker-compose ########################
 # For global installation, download docker-compose from github
 sudo curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-$(uname -s)-$(uname -m)" -o docker-compose
