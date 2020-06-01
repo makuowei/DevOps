@@ -18,8 +18,10 @@ sudo dnf remove podman-manpages
 sudo dnf install https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm
 sudo dnf install docker-ce
 
-# Disable Firewall to allow DNS from inside
-sudo systemctl disable firewalld
+# Disable Firewall to allow DNS from inside. Alternativly, add docker0 interface to trusted zone
+#sudo systemctl disable firewalld
+sudo firewall-cmd --permanent --zone=trusted --add-interface=docker0
+sudo firewall-cmd --reload
 
 # Enable docker daemon
 sudo systemctl enable --now docker
