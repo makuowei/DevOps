@@ -1,3 +1,11 @@
+#! /usr/bin/env sh
+
+######################################################################################################################
+# This shell script deploy docker and docer-componse on Centos 8 machine.
+# Prepared by: Kenneth Ma (Kenneth.Ma@dell.com)
+# Last Update: 2020-06-03
+######################################################################################################################
+
 # Enable Docker Repo. By default, only AppStream, Base and Extras in standard CentOS installation
 sudo dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
 
