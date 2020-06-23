@@ -73,7 +73,7 @@ Get-NetFirewallRule -Name Rabbit* | ft
 #$env:Path += ";SomeRandomPath"
 
 $erPath = 'c:\Program Files\erl-23.0\erts-11.0\bin'
-[System.Environment]::SetEnvironmentVariable('ERLANG_SERVICE_MANAGER_PATH',$erPath,[System.EnvironmentVariableTarget]::Machine)
+[System.Environment]::SetEnvironmentVariable('ERLANG_HOME',$erPath,[System.EnvironmentVariableTarget]::Machine)
 
 # Copy .erlang.cookie file from master node to other member node located:
 # C:\WINDOWS\system32\config\systemprofile                                      # <----------- Need manaul work here
