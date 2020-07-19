@@ -1,0 +1,98 @@
+﻿##########################################################################################################################
+# This script install RabbitMQ and the corresponding dependent components
+# Author: Kenneth Ma (Kenneth.Ma@dell.com)
+# Last Update: 2020-07-20 
+##########################################################################################################################
+
+
+###########################
+# 1. Deploy Microsoft Visual C++ 2013 Redistributable (x64)
+# 	Link: https://www.microsoft.com/en-US/download/details.aspx?id=40784
+
+###########################
+# 2. Deploy Erlang
+#	Must deploy Microsoft Visual C++ 2013 Redistributable (x64) before installing Erlang
+
+###########################
+# 3. Config Windows Environment Variables
+$rbmqdbPath = 'K:\RabbitMQ'
+[System.Environment]::SetEnvironmentVariable('RABBITMQ_BASE', $rbmqdbPath, [System.EnvironmentVariableTarget]::Machine) 
+
+###########################
+# 4. Enable Firewall ports
+# Open Firewall Port for AMQP
+New-NetFirewallRule -Name RabbitMQ_AMQP -DisplayName "RabbitMQ AMQP 0-9-1" `
+  -Profile    Domain `
+  -Direction  Inbound `
+  -Action     Allow `
+  -Protocol   TCP `
+  -LocalPort  5672,5671 `
+  -RemoteAddress LocalSubnet
+
+# Open Firewall port for remote management
+New-NetFirewallRule -Name RabbitMQ_Management -DisplayName "RabbitMQ Web Management" `
+  -Profile    Domain `
+  -Direction  Inbound `
+  -Action     Allow `
+  -Protocol   TCP `
+  -LocalPort  15672 `
+  -RemoteAddress LocalSubnet
+
+# Open Firewall port for clustering: epmd -> TCP4369
+New-NetFirewallRule -Name RabbitMQ_EPMD -DisplayName "RabbitMQ epmd" `
+  -Profile    Domain `
+  -Direction  Inbound `
+  -Action     Allow `
+  -Protocol   TCP `
+  -LocalPort  4369 `
+  -RemoteAddress LocalSubnet
+
+# Open Firewall port for inter-node communcation in a cluster
+New-NetFirewallRule -Name RabbitMQ_CLI -DisplayName 'RabbitMQ inter-node and CLI' `
+  -Enabled    True `
+  -Direction  Inbound `
+  -Protocol   ANY `
+  -Action     Allow `
+  -Profile    Domain `
+  -RemoteAddress 172.16.39.51,172.16.39.52,172.16.39.53			# include cluster nodes IP here
+
+Get-NetFirewallRule -Name Rabbit* | ft
+
+###########################
+# 5. Install RabbitMQ
+#	Install Rabbit MQ with default settings. Base folder was configured in #3 above.
+
+###########################
+# 6. Enable Plugins
+# 	a. Web Management Plugin
+#	b. Shovel Plugin
+#	c. Shovel management Plugin
+
+rabbitmq-plugins.bat enable rabbitmq_management
+rabbitmq-plugins enable rabbitmq_shovel
+rabbitmq-plugins enable rabbitmq_shovel_management
+
+############################
+# 7. Create User Logins
+
+# Default login "guest/guest" only allows access from localhost, 
+# create a new user for remote access
+rabbitmqctl.bat add_user rmqadmin '<NewPassword>'                                         # <------ Update here
+rabbitmqctl.bat set_user_tags rmqadmin administrator
+
+##########################
+# 8. Deploy clustering
+
+rabbitmq-service stop				  #
+rabbitmq-service start
+
+rabbitmqctl stop_app
+rabbitmqctl join_cluster rabbit@dts-rmq1          # node name is Case Sensiteive
+rabbitmqctl start_app
+
+
+
+
+# Test Programs with Python Pika
+#choco install python
+#python -m pip install pika --upgrade

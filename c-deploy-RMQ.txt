@@ -18,6 +18,10 @@ cd "C:\Program Files\RabbitMQ Server\rabbitmq_server-3.8.4\sbin\"
 .\rabbitmqctl.bat add_user rmqadmin '<NewPassword>'                                         # <------ Update here
 .\rabbitmqctl.bat set_user_tags rmqadmin administrator
 
+# Set RabbitMQ Base Path
+$rbmqdbPath = 'K:\RabbitMQ'
+[System.Environment]::SetEnvironmentVariable('RABBITMQ_BASE', $rbmqdbPath, [System.EnvironmentVariableTarget]::Machine) 
+
 
 # Remove any previous created RabbitMQ Firewall Rules 
 #Get-NetFirewallRule -Name Rabbit* | Remove-NetFirewallRule
@@ -56,6 +60,15 @@ New-NetFirewallRule -Name RabbitMQ_CLI -DisplayName "RabbitMQ inter-node and CLI
   -LocalPort  25672,35672-35682 `
   -RemoteAddress LocalSubnet
 
+New-NetFirewallRule -Name RabbitMQ_CLI -DisplayName 'RabbitMQ inter-node and CLI' `
+  -Enabled    True `
+  -Direction  Inbound `
+  -Protocol   ANY `
+  -Action     Allow `
+  -Profile    Domain `
+  -RemoteAddress 172.16.39.51,172.16.39.52,172.16.39.53
+
+
 New-NetFirewallRule -Name RabbitMQ_PROMETHEUS -DisplayName "RabbitMQ Prometheus Plugin" `
   -Profile    Domain `
   -Direction  Inbound `
@@ -68,9 +81,7 @@ Get-NetFirewallRule -Name Rabbit* | ft
 
 # Set System Environment Variables
 
-# The following only set variable in current session
-#$env:ERLANG_SERVICE_MANAGER_PATH = 'C:\Program Files\erl10.7\erts-10.7\bin'
-#$env:Path += ";SomeRandomPath"
+
 
 $erPath = 'c:\Program Files\erl-23.0\erts-11.0\bin'
 [System.Environment]::SetEnvironmentVariable('ERLANG_HOME',$erPath,[System.EnvironmentVariableTarget]::Machine)
@@ -78,15 +89,12 @@ $erPath = 'c:\Program Files\erl-23.0\erts-11.0\bin'
 # Copy .erlang.cookie file from master node to other member node located:
 # C:\WINDOWS\system32\config\systemprofile                                      # <----------- Need manaul work here
 
-
-rabbitmq-service stop rabbitmqctl stop_app
-
-rabbitmqctl start_app rabbitmq-service start
+rabbitmq-service stop				  #
+rabbitmq-service start
 
 rabbitmqctl stop_app
-
-rabbitmqctl join_cluster rabbit@RMQ1          # node name is Case Sensiteive
-
+rabbitmqctl join_cluster rabbit@dts-rmq1          # node name is Case Sensiteive
+rabbitmqctl start_app
 
 
 # Test Programs with Python Pika
