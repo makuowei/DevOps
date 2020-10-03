@@ -54,7 +54,7 @@ New-NetFirewallRule -Name RabbitMQ_CLI -DisplayName 'RabbitMQ inter-node and CLI
   -Protocol   ANY `
   -Action     Allow `
   -Profile    Domain `
-  -RemoteAddress 172.16.39.51,172.16.39.52,172.16.39.53			# include cluster nodes IP here
+  -RemoteAddress 172.16.39.51,172.16.39.52,172.16.39.53			# Update all cluster nodes IP here
 
 Get-NetFirewallRule -Name Rabbit* | ft
 

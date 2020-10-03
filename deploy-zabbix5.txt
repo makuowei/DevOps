@@ -1,9 +1,9 @@
 #! /usr/bin/env sh
 
 ######################################################################################################################
-# This shell script deploy docker and docer-componse on Centos 8 machine.
+# This shell script deploy containerized zabbix server/frontend/agent Centos 8 machine.
 # Prepared by: Kenneth Ma (Kenneth.Ma@dell.com)
-# Last Update: 2020-06-03
+# Last Update: 2020-08-15
 ######################################################################################################################
 
 # Enable Docker Repo. By default, only AppStream, Base and Extras in standard CentOS installation
@@ -28,14 +28,8 @@ sudo dnf install docker-ce
 
 # Disable Firewall to allow DNS from inside. Alternativly, add docker0 interface to trusted zone
 #sudo systemctl disable firewalld
-#sudo systemctl enable firewalld
-#sudo systemctl stop firewalld
-#sudo systemctl start firewalld
-
 sudo firewall-cmd --permanent --zone=trusted --add-interface=docker0
-firewall-cmd --zone=public --add-masquerade --permanent
-
-sudo firewall-cmd --reload	# when reload, all non-permanent config will be lost
+sudo firewall-cmd --reload
 
 # Enable docker daemon
 sudo systemctl enable --now docker
@@ -44,9 +38,14 @@ systemctl is-active docker
 # Enable IP Forwarding (for bridge network to reach outside)
 sudo sysctl net.ipv4.ip_forward=1
 
-################## download docker-compose ########################
-# For global installation, download docker-compose from github
-sudo curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
+#y################# deploy Zabbix 5.0 with offical sudodocker-compose ########################
+
+sudo curl -L https://github.com/docker/compose/releases/download/1.24.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+sudo dnf install git
+git clone https://github.com/zabbix/zabbix-docker.git
+
+cd zabbix-docker
+
+docker-compose -f docker-compose_v3_centos_mysql_latest.yaml up -d
 
 
