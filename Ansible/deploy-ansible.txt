@@ -1,0 +1,19 @@
+#! /usr/bin/env sh
+
+######################################################################################################################
+# This shell script deploy ansible and ansible tower on Centos 8 machine.
+# Prepared by: Kenneth Ma (Kenneth.Ma@dell.com)
+# Last Update: 2021-05-26
+######################################################################################################################
+
+# install ansible
+sudo dnf install ansible
+
+# enable Ansible Engine repository
+sudo subscription-manager repos --enable rhel-7-server-ansible-2.5-rpms
+
+
+
+# Notes:
+#  - Configuration File: /etc/ansible/ansible.cfg
+#  - Sample Config file: https://raw.githubusercontent.com/ansible/ansible/devel/examples/ansible.cfg
