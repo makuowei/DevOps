@@ -19,12 +19,5 @@ sudo subscription-manager repos --enable rhel-7-server-ansible-2.5-rpms
 #  - Sample Config file: https://raw.githubusercontent.com/ansible/ansible/devel/examples/ansible.cfg
 
 
-# Ansible Tower
 
-# Download Ansible Tower
-mkdir ansible_installer
-cd ansible_installer 
-curl https://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-latest.tar.gz --output ansible-tower-setup-latest.tar.gz
-tar xvzf ansible-tower-setup-latest.tar.gz
-cd ansible-tower-setup-<ver>
 
