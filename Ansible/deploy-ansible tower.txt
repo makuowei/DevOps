@@ -1,0 +1,46 @@
+#! /usr/bin/env sh
+
+######################################################################################################################
+# This shell script deploy Ansible Automation Platform on Centos 8 machine.
+# Prepared by: Kenneth Ma (Kenneth.Ma@dell.com)
+# Last Update: 2021-05-26
+######################################################################################################################
+
+# Source: https://blog.v12n.io/installing-ansible-tower-on-centos-8-for-testing-with-vra-8-1/
+
+# add RedHat's epel-release respository
+sudo dnf install -y epel-release
+
+# install ansible
+sudo dnf install -y ansible vim curl
+
+# Download Ansible Tower
+mkdir ansible_installer
+cd ansible_installer 
+curl -k -O https://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-latest.tar.gz
+tar xvzf ansible-tower-setup-latest.tar.gz
+
+# Update "inventory" file
+#   - Need to update the inventory to set the 
+#	"admin_password", 
+#	"pg_password",
+#	"automationhub_admin_password"
+#	"automationhub_pg_password"
+
+# Set up
+sudo ./setup.sh
+
+# Access to the Web
+#    - After installation, access to the host through Web interface (suggest to add your host to DNS)
+
+# Obtaining Trial License
+#    - Login to RedHat https://www.redhat.com with your (free) sign up account
+#    - It prompts you for entering the license 
+#    - Click Request License to direct you to RedHat page
+#    - Login to RedHat
+#    - Browse to https://access.redhat.com/management/subscriptions
+#    - A Trail subscription should be ready, but no subscription allocation yet. 
+#    * Create a new Subscription Allocation, for type, select the latest Sattelite (dont' know why this is necessary)
+#    * Allocation license units from the trial license
+#    * Export the manifest (a zip file)
+#    * Back to the Ansible Tower page, browse the downloaded license manifest file and done. 
