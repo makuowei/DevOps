@@ -33,7 +33,7 @@ sudo dnf install docker-ce
 #sudo systemctl start firewalld
 
 sudo firewall-cmd --permanent --zone=trusted --add-interface=docker0
-firewall-cmd --zone=public --add-masquerade --permanent
+sudo firewall-cmd --permanent --zone=public --add-masquerade 
 
 sudo firewall-cmd --reload	# when reload, all non-permanent config will be lost
 
